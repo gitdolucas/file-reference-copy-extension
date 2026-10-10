@@ -14,6 +14,7 @@
   let feedbackTimer = null;
   let pageKey = location.origin + location.pathname + location.search;
   let lastPointer = null;
+  let lastShortcutAt = -Infinity;
 
   const root = document.createElement("div");
   root.id = "code-ref-extension-root";
@@ -151,17 +152,6 @@
     return { file: filenameFor("local", startRoot), start: start.line, end: end.line };
   }
 
-  function reviewBoundary(node, offset, exclusiveEnd) {
-    const code = elementFor(node)?.closest("tr td code");
-    const row = code?.closest("tr");
-    if (!row || row.cells.length < 2 || !row.cells[1].contains(code)) return null;
-    const line = core.validLine(row.cells[0].textContent.trim());
-    if (!line) return null;
-    const prefix = prefixWithin(code, node, offset);
-    if (prefix === null) return null;
-    return { table: row.closest("table"), line: exclusiveEnd && !prefix ? line - 1 : line };
-  }
-
   function visible(element) {
     return element.getClientRects().length > 0 && getComputedStyle(element).visibility !== "hidden";
   }
@@ -178,12 +168,30 @@
   }
 
   function reviewSelection(range) {
-    const start = reviewBoundary(range.startContainer, range.startOffset, false);
-    const end = reviewBoundary(range.endContainer, range.endOffset, true);
-    if (!start?.table || start.table !== end?.table || end.line < start.line || !visible(start.table)) {
-      return null;
+    let match = null;
+    for (const table of document.querySelectorAll("table")) {
+      if (!visible(table) || !range.intersectsNode(table)) continue;
+      let first = Infinity;
+      let last = 0;
+      for (const row of table.rows) {
+        if (row.cells.length < 2) continue;
+        const line = core.validLine(row.cells[0].textContent.trim());
+        const code = row.cells[1].querySelector("code");
+        if (!line || !code || !range.intersectsNode(code)) continue;
+        const codeRange = document.createRange();
+        codeRange.selectNodeContents(code);
+        // Boundary points can be td/tr elements after a drag, not code text nodes.
+        if (range.compareBoundaryPoints(Range.START_TO_END, codeRange) > 0 &&
+            range.compareBoundaryPoints(Range.END_TO_START, codeRange) < 0) {
+          first = Math.min(first, line);
+          last = Math.max(last, line);
+        }
+      }
+      if (!last) continue;
+      if (match) return null;
+      match = { file: reviewFilename(table), start: first, end: last };
     }
-    return { file: reviewFilename(start.table), start: start.line, end: end.line };
+    return match;
   }
 
   function resolveSelection() {
@@ -328,10 +336,13 @@
 
   async function copyReference(allowSnapshot) {
     checkPage();
-    if (picking || copyPending) return;
+    if (picking || copyPending) return "busy";
     const snapshot = resolveSelection() || (allowSnapshot ? current : null);
-    if (!snapshot) return;
-    if (snapshot.pageKey !== pageKey) return hideToolbar();
+    if (!snapshot) return "no-selection";
+    if (snapshot.pageKey !== pageKey) {
+      hideToolbar();
+      return "no-selection";
+    }
     current = snapshot;
     positionToolbar();
     copyPending = true;
@@ -344,8 +355,10 @@
       } catch {
         showFeedback("Copied; destination unavailable", true);
       }
+      return "copied";
     } catch {
       showFeedback("Clipboard unavailable — try again", true);
+      return "clipboard-error";
     } finally {
       copyPending = false;
       copyButton.disabled = false;
@@ -354,8 +367,23 @@
 
   copyButton.addEventListener("click", () => { void copyReference(true); });
 
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message?.type === "code-ref-copy-selection") void copyReference(false);
+  function runCopyShortcut() {
+    const now = performance.now();
+    if (now - lastShortcutAt < 300) return Promise.resolve("duplicate");
+    lastShortcutAt = now;
+    return copyReference(false);
+  }
+
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message?.type === "code-ref-ping") {
+      sendResponse({ version: chrome.runtime.getManifest().version, rootConnected: root.isConnected });
+    } else if (message?.type === "code-ref-copy-selection") {
+      runCopyShortcut().then(
+        (status) => sendResponse({ status }),
+        () => sendResponse({ status: "error" })
+      );
+      return true;
+    }
   });
 
   destinationButton.addEventListener("click", () => {
@@ -386,6 +414,13 @@
   }, true);
 
   document.addEventListener("keydown", (event) => {
+    if (!event.repeat && event.shiftKey && !event.altKey &&
+        (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "y") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      runCopyShortcut();
+      return;
+    }
     if (event.key !== "Escape") return;
     if (picking) {
       picking = false;

@@ -14,6 +14,8 @@ Chrome Manifest V3 extension for copying code-line references from supported fil
 
 After enabling the current tab with the extension icon, select code and press **Command+Shift+Y** on macOS or **Ctrl+Shift+Y** on Windows/Linux to copy its reference. The shortcut performs the same clipboard and destination-field actions as **Copy Ref**. Change the binding at `chrome://extensions/shortcuts` if needed.
 
+After updating an unpacked extension, reload it in `chrome://extensions` and click its icon in the open code tab again. The extension replaces any toolbar left by the previous version. A **SEL** badge means the current selection has no recognizable file and line numbers; **OFF** means the tab needs activation.
+
 Chrome uses **Command+Shift+C** on macOS for DevTools Inspect mode (and **Ctrl+Shift+C** on Windows/Linux). Chrome and operating-system shortcuts can take priority over extension commands, so this extension cannot reliably override that key combination.
 
 ## Supported views

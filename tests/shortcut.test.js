@@ -9,7 +9,10 @@ test("shortcut sends copy request only to the active tab", async () => {
   let commandListener;
   const chrome = {
     action: {
-      onClicked: { addListener() {} }
+      onClicked: { addListener() {} },
+      async setBadgeBackgroundColor() {},
+      async setBadgeText() {},
+      async setTitle() {}
     },
     commands: {
       onCommand: { addListener(listener) { commandListener = listener; } }
@@ -17,7 +20,10 @@ test("shortcut sends copy request only to the active tab", async () => {
     tabs: {
       onUpdated: { addListener() {} },
       async query() { return [{ id: 42 }]; },
-      async sendMessage(tabId, message) { sent.push({ tabId, message }); }
+      async sendMessage(tabId, message) {
+        sent.push({ tabId, message });
+        return { status: "copied" };
+      }
     }
   };
   const source = fs.readFileSync(path.join(__dirname, "..", "background.js"), "utf8");
@@ -33,4 +39,35 @@ test("shortcut sends copy request only to the active tab", async () => {
   await commandListener("copy-reference");
   assert.equal(sent[1].tabId, 42);
   assert.equal(sent[1].message.type, "code-ref-copy-selection");
+});
+
+test("activation replaces an orphaned toolbar after an extension update", async () => {
+  const operations = [];
+  let actionListener;
+  const chrome = {
+    action: {
+      onClicked: { addListener(listener) { actionListener = listener; } },
+      async setBadgeBackgroundColor() {},
+      async setBadgeText() {},
+      async setTitle() {}
+    },
+    commands: { onCommand: { addListener() {} } },
+    runtime: { getManifest() { return { version: "0.1.2" }; } },
+    scripting: {
+      async executeScript() { operations.push("script"); },
+      async insertCSS() { operations.push("css"); }
+    },
+    tabs: {
+      onUpdated: { addListener() {} },
+      async sendMessage(_tabId, message) {
+        operations.push(message.type);
+        throw new Error("Receiving end does not exist");
+      }
+    }
+  };
+  const source = fs.readFileSync(path.join(__dirname, "..", "background.js"), "utf8");
+  vm.runInNewContext(source, { chrome });
+
+  await actionListener({ id: 7 });
+  assert.equal(operations.join(","), "code-ref-ping,script,css,script");
 });
