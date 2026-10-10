@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code Reference Copier local fixture</title>
+  <style>
+    body { max-width: 900px; margin: 48px auto; padding: 0 24px; background: #f4f2ec; color: #1e2921; font: 16px/1.5 Georgia, serif; }
+    h1 { font-size: 27px; }
+    .code-view { overflow: auto; border: 1px solid #cad0c7; border-radius: 9px; background: #1d2820; color: #e8ebdf; font: 14px/1.7 Menlo, Consolas, monospace; }
+    [data-code-line] { display: flex; min-height: 24px; white-space: pre; }
+    [data-code-line]::before { content: attr(data-line-number); width: 54px; flex: none; text-align: right; padding-right: 18px; margin-right: 18px; color: #8e9d8e; border-right: 1px solid #465248; user-select: none; }
+    [data-code-line] span { display: block; }
+    textarea, input, [contenteditable] { width: 100%; min-height: 42px; box-sizing: border-box; padding: 10px; border: 1px solid #9ca99a; border-radius: 6px; background: white; font: 14px/1.5 Menlo, Consolas, monospace; }
+    textarea { min-height: 120px; }
+    [contenteditable] { min-height: 90px; white-space: pre-wrap; }
+    label { display: block; margin: 24px 0 7px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Local code view fixture</h1>
+  <p>Select code, then use the floating toolbar. Choose a field as destination to collect multiple references.</p>
+  <div class="code-view" data-code-filename="frontend/src/App.jsx" aria-label="App.jsx source code">
+    <div data-code-line data-line-number="45"><span>function App() {</span></div>
+    <div data-code-line data-line-number="46"><span>  const title = <b>"Code Reference Copier"</b>;</span></div>
+    <div data-code-line data-line-number="47"><span>  return (</span></div>
+    <div data-code-line data-line-number="48"><span>    &lt;main&gt;</span></div>
+    <div data-code-line data-line-number="49"><span>      &lt;h1&gt;{title}&lt;/h1&gt;</span></div>
+    <div data-code-line data-line-number="50"><span>    &lt;/main&gt;</span></div>
+    <div data-code-line data-line-number="51"><span>  );</span></div>
+    <div data-code-line data-line-number="52"><span>}</span></div>
+  </div>
+  <label for="notes">Textarea destination</label>
+  <textarea id="notes" placeholder="References appear here"></textarea>
+  <label for="single">Single-line destination</label>
+  <input id="single" type="text" placeholder="References appear here">
+  <label for="rich">Editable destination</label>
+  <div id="rich" contenteditable="true" role="textbox" aria-label="Editable destination"></div>
+</body>
+</html>

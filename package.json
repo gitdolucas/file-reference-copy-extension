@@ -1,0 +1,9 @@
+{
+  "name": "code-reference-copier",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Development checks for the Code Reference Copier Chrome extension",
+  "scripts": {
+    "test": "node --test"
+  }
+}

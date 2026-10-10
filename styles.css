@@ -1,0 +1,142 @@
+#code-ref-extension-root {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  pointer-events: none;
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  color: #f6f4ee;
+}
+
+#code-ref-extension-root *,
+#code-ref-extension-root *::before,
+#code-ref-extension-root *::after {
+  box-sizing: border-box;
+}
+
+#code-ref-extension-root [hidden] {
+  display: none !important;
+}
+
+#code-ref-copy-toolbar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 42px;
+  padding: 5px;
+  max-width: calc(100vw - 16px);
+  border: 1px solid #394039;
+  border-radius: 10px;
+  background: #17201b;
+  box-shadow: 0 10px 30px #0b130c55, 0 2px 8px #0b130c33;
+  pointer-events: auto;
+  animation: code-ref-arrive 140ms ease-out both;
+}
+
+#code-ref-extension-root .code-ref-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 29px;
+  min-width: 33px;
+  margin-right: 2px;
+  border-radius: 6px;
+  background: #f2c26f;
+  color: #17201b;
+  font: 700 12px/1 "SFMono-Regular", Menlo, Consolas, monospace;
+  letter-spacing: -0.08em;
+}
+
+#code-ref-extension-root button {
+  appearance: none;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #f6f4ee;
+  cursor: pointer;
+  font: 600 11px/1.2 "SFMono-Regular", Menlo, Consolas, monospace;
+  letter-spacing: 0;
+  white-space: nowrap;
+  padding: 8px 9px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+#code-ref-extension-root button:hover {
+  background: #2d3a31;
+}
+
+#code-ref-extension-root button:focus-visible {
+  outline: 2px solid #f2c26f;
+  outline-offset: 1px;
+}
+
+#code-ref-extension-root button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+#code-ref-extension-root .code-ref-divider {
+  height: 18px;
+  width: 1px;
+  margin: 0 1px;
+  background: #48554b;
+}
+
+#code-ref-feedback {
+  color: #b9e1b1;
+  font-size: 10px;
+  white-space: nowrap;
+  padding: 0 7px;
+}
+
+#code-ref-feedback:empty {
+  display: none;
+}
+
+#code-ref-feedback.code-ref-error {
+  color: #ffd28b;
+}
+
+#code-ref-destination-dock {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px 5px 11px;
+  max-width: min(360px, calc(100vw - 32px));
+  border: 1px solid #394039;
+  border-left: 3px solid #f2c26f;
+  border-radius: 8px;
+  background: #17201b;
+  box-shadow: 0 6px 20px #0b130c3d;
+  color: #f6f4ee;
+  font: 600 11px/1.3 "SFMono-Regular", Menlo, Consolas, monospace;
+  pointer-events: auto;
+}
+
+#code-ref-destination-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#code-ref-extension-root #code-ref-clear-destination {
+  color: #f2c26f;
+}
+
+.code-ref-destination-active {
+  outline: 2px solid #dfaa56 !important;
+  outline-offset: 3px !important;
+}
+
+@keyframes code-ref-arrive {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #code-ref-copy-toolbar { animation: none; }
+  #code-ref-extension-root button { transition: none; }
+}

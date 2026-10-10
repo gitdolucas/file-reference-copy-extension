@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code Reference Copier review fixture</title>
+  <style>
+    body { max-width: 920px; margin: 45px auto; padding: 0 24px; background: #f4f2ec; color: #1d281f; font: 16px/1.5 Georgia, serif; }
+    h1 { font-size: 28px; }
+    h3 { margin-bottom: 8px; font: 600 16px/1.4 Menlo, Consolas, monospace; }
+    button { margin: 0 7px 22px 0; padding: 7px 12px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; background: #1d2820; color: #e8ebdf; font: 14px/1.6 Menlo, Consolas, monospace; }
+    tr td { padding: 0 12px; }
+    tr td:first-child { width: 58px; text-align: right; color: #91a191; border-right: 1px solid #4a584c; user-select: none; }
+    tr td:last-child { white-space: pre; }
+    code { font: inherit; }
+    textarea { display: block; width: 100%; min-height: 130px; box-sizing: border-box; padding: 12px; font: 14px/1.5 Menlo, Consolas, monospace; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <h1>Review app fixture</h1>
+  <p>Two file blocks share one feedback field. Switch files without reloading, as in a single-page review app.</p>
+  <button type="button" id="show-app">Show App.jsx</button>
+  <button type="button" id="show-readme">Show README.md</button>
+
+  <section id="app-file">
+    <h3>App.jsx &nbsp; + 8 &nbsp; - 0</h3>
+    <table aria-label="App.jsx code diff">
+      <tbody>
+        <tr><td class="blob-num text-right">45</td><td><code class="code-line">function App() {</code></td></tr>
+        <tr><td class="blob-num text-right">46</td><td><code class="code-line">  const title = <span>"Review"</span>;</code></td></tr>
+        <tr><td class="blob-num text-right">47</td><td><code class="code-line">  return (</code></td></tr>
+        <tr><td class="blob-num text-right">48</td><td><code class="code-line">    &lt;main&gt;</code></td></tr>
+        <tr><td class="blob-num text-right">49</td><td><code class="code-line">      &lt;h1&gt;{title}&lt;/h1&gt;</code></td></tr>
+        <tr><td class="blob-num text-right">50</td><td><code class="code-line">    &lt;/main&gt;</code></td></tr>
+        <tr><td class="blob-num text-right">51</td><td><code class="code-line">  );</code></td></tr>
+        <tr><td class="blob-num text-right">52</td><td><code class="code-line">}</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="readme-file" hidden>
+    <h3>README.md &nbsp; + 3 &nbsp; - 1</h3>
+    <table aria-label="README.md code diff">
+      <tbody>
+        <tr><td class="blob-num text-right">10</td><td><code class="code-line">## Setup</code></td></tr>
+        <tr><td class="blob-num text-right">11</td><td><code class="code-line">Install the extension.</code></td></tr>
+        <tr><td class="blob-num text-right">12</td><td><code class="code-line">Select code and copy a reference.</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <h2>Review feedback</h2>
+  <textarea aria-label="Review feedback" placeholder="References collect here"></textarea>
+
+  <script>
+    const appFile = document.getElementById("app-file");
+    const readmeFile = document.getElementById("readme-file");
+    document.getElementById("show-app").addEventListener("click", () => {
+      appFile.hidden = false;
+      readmeFile.hidden = true;
+    });
+    document.getElementById("show-readme").addEventListener("click", () => {
+      appFile.hidden = true;
+      readmeFile.hidden = false;
+    });
+  </script>
+</body>
+</html>
