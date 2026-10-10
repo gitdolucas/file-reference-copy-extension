@@ -326,11 +326,14 @@
     return true;
   }
 
-  copyButton.addEventListener("click", async () => {
+  async function copyReference(allowSnapshot) {
     checkPage();
-    if (!current || copyPending) return;
-    const snapshot = resolveSelection() || current;
+    if (picking || copyPending) return;
+    const snapshot = resolveSelection() || (allowSnapshot ? current : null);
+    if (!snapshot) return;
     if (snapshot.pageKey !== pageKey) return hideToolbar();
+    current = snapshot;
+    positionToolbar();
     copyPending = true;
     copyButton.disabled = true;
     try {
@@ -347,6 +350,12 @@
       copyPending = false;
       copyButton.disabled = false;
     }
+  }
+
+  copyButton.addEventListener("click", () => { void copyReference(true); });
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type === "code-ref-copy-selection") void copyReference(false);
   });
 
   destinationButton.addEventListener("click", () => {

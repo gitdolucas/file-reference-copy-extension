@@ -22,6 +22,18 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 });
 
+chrome.commands.onCommand.addListener(async (command, tab) => {
+  if (command !== "copy-reference") return;
+  const activeTab = tab?.id ? tab : (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+  if (!activeTab?.id) return;
+  try {
+    // A shortcut only copies on a page already enabled through the extension icon.
+    await chrome.tabs.sendMessage(activeTab.id, { type: "code-ref-copy-selection" });
+  } catch {
+    // No content script is present until the user enables this tab manually.
+  }
+});
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status !== "loading") return;
   chrome.action.setBadgeText({ tabId, text: "" });

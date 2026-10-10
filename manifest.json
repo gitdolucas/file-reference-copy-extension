@@ -1,11 +1,20 @@
 {
   "manifest_version": 3,
   "name": "Code Reference Copier",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Copy precise code line references from GitHub, GitLab, and supported local code views.",
   "permissions": ["clipboardWrite", "activeTab", "scripting"],
   "action": {
     "default_title": "Enable Code Reference Copier on this page"
+  },
+  "commands": {
+    "copy-reference": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Copy a reference to the selected code lines"
+    }
   },
   "background": {
     "service_worker": "background.js"

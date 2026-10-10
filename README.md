@@ -10,6 +10,12 @@ Chrome Manifest V3 extension for copying code-line references from supported fil
 4. Open a supported file view and click the extension icon to enable it in that tab. The badge reads **ON**.
 5. Select code text.
 
+## Keyboard shortcut
+
+After enabling the current tab with the extension icon, select code and press **Command+Shift+Y** on macOS or **Ctrl+Shift+Y** on Windows/Linux to copy its reference. The shortcut performs the same clipboard and destination-field actions as **Copy Ref**. Change the binding at `chrome://extensions/shortcuts` if needed.
+
+Chrome uses **Command+Shift+C** on macOS for DevTools Inspect mode (and **Ctrl+Shift+C** on Windows/Linux). Chrome and operating-system shortcuts can take priority over extension commands, so this extension cannot reliably override that key combination.
+
 ## Supported views
 
 - GitHub repository file **Code** view (`/owner/repo/blob/...`). For Markdown files, switch from **Preview** to **Code**.
